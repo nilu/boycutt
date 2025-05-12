@@ -1,123 +1,160 @@
-Boycott Extension — MVP Product/Delivery Plan
+# 🛑 Boycott Extension
 
-0. Vision & Success Metrics
-Goal	KPI	Target for v1
-Empower users to avoid sites/brands on selected boycott lists	- % of flagged visits that users “leave”	≥ 25 %
-Effortless list maintenance by you (the curator)	New list item → ≤ 15 min until live in prod	100 % of pushes
-Solid base for cross-browser future	All code passes Firefox Web-Extension validator	Yes
+> A privacy-respecting **Manifest V3** browser extension that warns (or blocks) visits to websites and products appearing on boycott lists you choose — e.g. *Pro-BDS targets*, *anti-US brands*, or any other curated group.
 
-1. Technical Foundations & Dev Setup
-Task	Notes / Acceptance Criteria
-1.1 Repo & Tooling	• GitHub mono-repo «boycott-ext» (MIT).
-• Node ≥ 20, pnpm or npm ≥ 10.
-• Initialize vite + ts template targeted at Manifest V3.
-• ESLint + Prettier + Husky pre-commit.
-1.2 Shared Types & SDK	/packages/sdk → TypeScript types for List, Item, Source; helper to query the API (see §2).
-1.3 Unit & E2E tests	• Jest for logic tests.
-• Playwright-Chromium for extension E2E (loads unpacked build, simulates navigation, checks banner).
-1.4 CI/CD	GitHub Actions: lint → test → build; on main create signed ZIP artefact.
-Optional: push to Chrome Web Store via Chrome CI action.
-1.5 Cross-browser hygiene	Add @mozilla/webextension-polyfill and run web-ext lint in CI to surface Firefox issues immediately. 
-MDN Web Docs
-MDN Web Docs
+[![CI Status](https://github.com/your-handle/boycott-ext/actions/workflows/ci.yml/badge.svg)](./actions)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/XXXXXXXXXXXXXXX.svg?logo=googlechrome)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
-2. Data-Layer (Lists API & Admin)
-Task	Notes
-2.1 Source research	• Ethical Consumer boycott endpoints 
-Ethical Consumer
+---
+
+## ✨ Features
+
+| ✨ | What it does | Status |
+|----|--------------|--------|
+| 🚦 **Instant alerts** | Pops a banner when you land on a listed site with "Leave / Continue" options | ✅ v1 |
+| 🎛 **List chooser** | Enable/disable boycott lists from the Options page; syncs across devices | ✅ v1 |
+| 🔄 **Live updates** | Lists are fetched from your CDN/API and cached with ETag diffing | ✅ v1 |
+| 🛡 **Minimal permissions** | Requests only the APIs it needs (`webNavigation`, `storage`, dynamic hosts) | ✅ v1 |
+| 🗂 **Cross-browser ready** | Code passes Firefox `web-ext lint`; Edge store compatible | 🛠 |
+| 🛍 **Alt-product suggestions** | Recommends ethical alternatives when available | ⏭ roadmap |
+
+---
+
+## 📸 Screenshots
+
+> *(Add real screenshots once you have them)*
+
+| Landing on a boycotted site | Options page (list selector) |
+|-----------------------------|------------------------------|
+| ![banner](docs/img/banner.png) | ![options](docs/img/options.png) |
+
+---
+
+## 🏗️ Getting Started (for Developers)
+
+### 1. Prerequisites
+
+- **Node 20+** & **pnpm** (corepack enabled)
+- Chrome ≥ 114 (Manifest V3) or Firefox ≥ 121 (WebExtensions MV3)
+- Git
+
+```bash
+git clone https://github.com/your-handle/boycott-ext.git
+cd boycott-ext
+corepack enable     # enables pnpm
+pnpm i              # install deps
+```
+
+### 2. Run Extension in Dev mode
+
+```bash
+pnpm dev            # vite builds w/ HMR to ./dist
+# then in Chrome: chrome://extensions → "Load unpacked" → ./dist
+pnpm dev:watch      # rebuild service-worker on save
+```
+
+### 3. Build for Production
+
+```bash
+pnpm build          # outputs signed ZIP to ./packages/artifacts
+```
+
+### 4. Running Tests
+
+```bash
+pnpm test           # vitest + jest unit tests
+pnpm e2e            # playwright integration suite
+```
+
+---
+
+## 🗄 Project Layout
+
+```
 .
-• BDS movement priority targets 
-BDS Movement
-.
-• OpenSanctions for sanctions-based lists (already has swagger API) 
-api.opensanctions.org
-.
-2.2 Aggregator service	Small Fastify/Express micro-service (or Cloudflare Workers) that:
-a. Scrapes / ingests each source on daily cron.
-b. Normalises to { id, name, urlPatterns[ ], tags[ ], lastUpdated, source }.
-c. Publishes static JSON at https://your-cdn/lists/{slug}.json and an index (lists.json) enumerating all lists and metadata.
-2.3 Admin console	Auth-gated (Google OAuth) web UI built with Next.js (or Supabase Studio) to:
-• Toggle list visibility, edit metadata.
-• Add custom single entries that aren’t in upstream data.
-• Trigger immediate republish.
-2.4 Versioning & Caching	Response headers Cache-Control: public, max-age=86400, plus ETag for diffing. Extension stores lastEtag in chrome.storage.local to fetch deltas only.
+├── apps/
+│   └── admin-console/        # Next.js CRUD for list management
+├── packages/
+│   ├── extension/            # MV3 code (service-worker, content, UI)
+│   └── sdk/                  # Shared TS types & helpers
+├── services/
+│   └── aggregator/           # Cloudflare Worker that fetches + normalises boycott sources
+├── docs/                     # screenshots, architecture diagrams
+└── .github/                  # CI pipeline
+```
 
-3. Extension Architecture (Chrome ≥ MV3)
-Component	Responsibilities / Key APIs
-Service Worker (background.ts)	• Fetch lists on startup or when etag changes.
-• Listen chrome.webNavigation.onCommitted to capture top-level navigations.
-• Match URL against combined urlPatterns with URLPattern / regex.
-• If hit → send message to content script. 
-Chrome for Developers
-Content Script (banner.tsx)	Injects shadow-DOM banner with warning, list badges, “Proceed / Leave” buttons.
-Uses document.visibilityState + MutationObserver to hide/re-show for SPAs.
-Options Page (options.html)	• Checkbox list of available boycott lists.
-• “Learn more” links to list source.
-• Stores user prefs in chrome.storage.sync (so settings roam).
-Popup UI	Browser-action icon shows quick toggle per-site + open settings.
-Analytics (opt-in)	Anonymous events (site_flagged, user_left) via Plausible or self-hosted.
+---
 
-4. Feature Backlog (MVP ✅ / Later 🚧)
-ID	Feature	Priority
-F-1	Fetch & merge boycott lists, respecting user selections	✅
-F-2	Real-time alert banner with continue/leave	✅
-F-3	Options page to enable/disable lists	✅
-F-4	Automatic update when API publishes new etag	✅
-F-5	Suggest alternative sites/products (e.g., ethicalconsumer alternatives API)	🚧
-F-6	Product-page highlighting on e-commerce sites (blur/overlay)	🚧
-F-7	Barcode/UPC scanning companion mobile app	🚧
-F-8	Cross-browser builds (Firefox AMO, Edge Add-ons)	🚧
-F-9	Localisation (i18n JSON + Crowdin pipeline)	🚧
-F-10	Community-submitted lists with moderation queue	🚧
+## ⚙️ Architecture Overview
 
-5. Security & Privacy
-Least-privilege permissions — request only "webNavigation", "storage", "declarativeNetRequest" (if you later auto-block) and host permissions added dynamically via optional_permissions. 
-MDN Web Docs
+| Layer          | Tech                              | Responsibilities                                                                                  |
+|--------------- |-----------------------------------|---------------------------------------------------------------------------------------------------|
+| Aggregator     | Cloudflare Workers Cron + KV      | Nightly ingest of third-party boycott feeds (EthicalConsumer, BDS, OpenSanctions) → normalises to lists/*.json |
+| Extension SW   | TypeScript, chrome.webNavigation  | Fetches lists on boot/etag change, matches navigations, sends alert messages                      |
+| Content Script | React + Shadow DOM                | Renders non-intrusive banner with list badges & CTA buttons                                       |
+| Storage        | chrome.storage.sync               | User-enabled list slugs, dismissed banners, analytics opt-in                                      |
+| Admin Console  | Next.js + Google OAuth            | Toggle list visibility, manual item overrides, force-publish                                      |
 
-Content-Security-Policy set to avoid inline scripts/styles.
+(See `docs/architecture.md` for full diagrams.)
 
-Data collection requires explicit opt-in (GDPR + Chrome policy).
+---
 
-Code signing — use Chrome Web Store’s review + supply checksums.txt in repo for reproducibility.
+## 📦 Distributing
 
-6. Testing & QA
-Layer	Tooling	Scenarios
-Unit	Jest + Vitest	Pattern-matching, storage, message-passing
-Component	React Testing-Library	Banner rendering with various list combos
-E2E	Playwright Chromium	• Navigate to allowed vs. boycotted sites
-• Reload → ensure banner state persists
-• Options changes propagate immediately
-Manual	Canary/Dev builds	Memory footprint, race conditions with heavy pages
+```bash
+pnpm build   # generates a signed ZIP boycott-ext.zip
+```
 
-7. Release & Distribution
-Internal alpha — load unpacked, dog-food with curated lists.
+- **Chrome Web Store**: Dashboard → Items → Upload ZIP → fill metadata & privacy policy
+- **Edge Add-ons** — same artifact
+- **Firefox AMO**:
 
-Chrome Web Store — submit under “Productivity › Shopping tools”; provide privacy policy & list update cadence.
+```bash
+web-ext build && web-ext sign
+```
 
-Edge Add-ons — same ZIP after validation.
+---
 
-Firefox — run web-ext build && sign; resolve any MV3 API gaps (Firefox supports most MV3 as of 2025). 
-MDN Web Docs
+## 🛡 Security & Privacy
 
-8. Roadmap to “Beyond Chrome”
-Milestone	Tasks
-M-1 WebExtensions parity	Audit APIs used; replace any chrome.* globals with browser.* via polyfill; rely on promises instead of callbacks.
-M-2 Safari (WebExtension)	Xcode converter → fix plist entitlements; test on iOS 17+.
-M-3 Mobile Companion (Android & iOS)	Use same list JSON; barcode scan & share-sheet intercepts.
-M-4 Serverless alt-product recommender**	Graph of products ↔ boycott status ↔ alternatives.
+- Least privilege permission set
+- No personal data is transmitted unless the user opts-in to anonymous usage analytics
+- All boycott data is sourced & attributed; takedown requests honoured within 48 h
 
-9. Risks & Mitigations
-Risk	Impact	Mitigation
-List accuracy / defamation claims	High legal	Keep source attribution, publish correction workflow, respect takedown notices
-API rate-limits or downtime	Medium UX	Cache lists, exponential back-off
-Chrome store policy changes (e.g., political content)	Medium removal	Follow MV3, no hidden tracking, provide clear value statement
-High banner fatigue → uninstalls	Medium retention	Allow granular list toggles & "silent mode" icon-badge only
+See `SECURITY.md` for reporting vulnerabilities
 
-10. Next Steps (Sprint 0)
-Create repo & automate build/test (tasks 1.1 → 1.4).
+---
 
-Draft JSON schema & spin up lightweight Cloudflare Worker that serves a hard-coded “demo” list.
+## 🗺 Roadmap
 
-Build minimal service-worker that flags example.com → prove banner injection.
+- Browser-action popup site toggle
+- Ethical-alternative recommender API
+- Community-submitted lists w/ moderation
+- i18n (Crowdin)
+- Safari (macOS + iOS) build
+- Mobile companion app (barcode scanner)
 
-Hold design review & lock scope for Sprint 1.
+---
+
+## 🤝 Contributing
+
+PRs & issues welcome! Please follow the commit convention and run the test suite before pushing:
+
+```bash
+pnpm lint && pnpm test && pnpm build
+```
+
+- Fork → feature branch → PR
+- Describe why the change is valuable
+- Ensure CI passes; maintainers will review ASAP
+
+---
+
+## © License
+
+Licensed under the MIT License – see LICENSE for details.
+
+Built with ❤ by Your Name (@your-handle).
+
+"Code is a political act — choose your dependencies wisely."
