@@ -9,7 +9,7 @@
   - [x] Lint/Format → ESLint, Prettier, husky pre-commit hook.
     - [x] Verify: committing with lint error blocks push.
   - [x] Polyfill add webextension-polyfill for cross-browser.
-  - [ ] CI GitHub Actions: lint → test → build ZIP artefact.
+  - [x] CI GitHub Actions: lint → test → build ZIP artefact.
   - [ ] Demo data service
   - [ ] Deploy Cloudflare Worker that serves lists.json with example.com.
   - [ ] Hard-code fetch in service-worker, store in chrome.storage.local.
