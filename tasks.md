@@ -1,8 +1,8 @@
-- [ ] **Sprint 0 — Boot & “Hello Banner”**
-    - [ ] Init repo boycott-ext (public, MIT).
-        - [ ] Verify: remote clone & first commit pushes green.
-    - [ ] Node toolchain → corepack enable, pnpm install.
-        - [ ] Verify: node -v ≥ 20, pnpm build succeeds.
+- [x] **Sprint 0 — Boot & "Hello Banner"**
+    - [x] Init repo boycott-ext (public, MIT).
+        - [x] Verify: remote clone & first commit pushes green.
+    - [x] Node toolchain → corepack enable, pnpm install.
+        - [x] Verify: node -v ≥ 20, pnpm build succeeds.
     - [ ] Scaffold Vite + TypeScript Manifest V3 template.
         - [ ] Verify: loads as unpacked extension, icon appears.
     - [ ] Lint/Format → ESLint, Prettier, husky pre-commit hook.
@@ -14,7 +14,7 @@
     - [ ] Hard-code fetch in service-worker, store in chrome.storage.local.
     - [ ] Banner POC
     - [ ] On visit to example.com, inject banner component.
-    - [ ] “Leave / Continue” buttons alter window.location / dismiss.
+    - [ ] "Leave / Continue" buttons alter window.location / dismiss.
 
 - [ ] **Sprint 1 — Data Layer & Admin**
     - [ ] Choose sources (EthicalConsumer, BDS, OpenSanctions, etc.).
@@ -25,7 +25,7 @@
     - [ ] Admin console (Next.js or Supabase):
         - [ ] OAuth-protected login.
         - [ ] CRUD lists & single overrides.
-        - [ ] “Republish now” button.
+        - [ ] "Republish now" button.
 
 - [ ] **Sprint 2 — Extension Core**
     - [ ] Service Worker
@@ -34,10 +34,10 @@
         - [ ] Regex/URLPattern match → postMessage to tab.
     - [ ] Content Script
         - [ ] Shadow-DOM banner (React/Tailwind).
-        - [ ] Show list badges + links to “Why?”.
+        - [ ] Show list badges + links to "Why?".
     - [ ] Options Page
         - [ ] Checkbox per list, stored in chrome.storage.sync.
-        - [ ] “Update now” + export/import prefs JSON.
+        - [ ] "Update now" + export/import prefs JSON.
         - [ ] Browser-action popup quick per-site toggle.
     - [ ] Permissions hardening: only "storage", "webNavigation", dynamic hosts.
 
