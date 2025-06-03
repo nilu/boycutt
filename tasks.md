@@ -3,8 +3,8 @@
         - [x] Verify: remote clone & first commit pushes green.
     - [x] Node toolchain → corepack enable, pnpm install.
         - [x] Verify: node -v ≥ 20, pnpm build succeeds.
-    - [ ] Scaffold Vite + TypeScript Manifest V3 template.
-        - [ ] Verify: loads as unpacked extension, icon appears.
+    - [x] Scaffold Vite + TypeScript Manifest V3 template.
+        - [x] Verify: loads as unpacked extension, icon appears.
     - [ ] Lint/Format → ESLint, Prettier, husky pre-commit hook.
         - [ ] Verify: committing with lint error blocks push.
     - [ ] Polyfill add webextension-polyfill for cross-browser.
