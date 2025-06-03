@@ -8,7 +8,7 @@
     - [x] Verify: loads as unpacked extension, icon appears.
   - [x] Lint/Format → ESLint, Prettier, husky pre-commit hook.
     - [x] Verify: committing with lint error blocks push.
-  - [ ] Polyfill add webextension-polyfill for cross-browser.
+  - [x] Polyfill add webextension-polyfill for cross-browser.
   - [ ] CI GitHub Actions: lint → test → build ZIP artefact.
   - [ ] Demo data service
   - [ ] Deploy Cloudflare Worker that serves lists.json with example.com.
