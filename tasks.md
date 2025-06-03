@@ -6,8 +6,8 @@
     - [x] Verify: node -v ≥ 20, pnpm build succeeds.
   - [x] Scaffold Vite + TypeScript Manifest V3 template.
     - [x] Verify: loads as unpacked extension, icon appears.
-  - [ ] Lint/Format → ESLint, Prettier, husky pre-commit hook.
-    - [ ] Verify: committing with lint error blocks push.
+  - [x] Lint/Format → ESLint, Prettier, husky pre-commit hook.
+    - [x] Verify: committing with lint error blocks push.
   - [ ] Polyfill add webextension-polyfill for cross-browser.
   - [ ] CI GitHub Actions: lint → test → build ZIP artefact.
   - [ ] Demo data service
