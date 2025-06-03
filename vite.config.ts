@@ -1,20 +1,20 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: "index.html",
-        background: "src/background.ts"
+        main: 'index.html',
+        background: 'src/background.ts',
       },
       output: {
         entryFileNames: (chunk) => {
-          if (chunk.name === "background") return "background.js";
-          return "[name].js";
-        }
-      }
+          if (chunk.name === 'background') return 'background.js'
+          return '[name].js'
+        },
+      },
     },
-    outDir: "dist"
+    outDir: 'dist',
   },
-  publicDir: "public"
-}); 
+  publicDir: 'public',
+})
